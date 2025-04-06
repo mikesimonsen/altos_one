@@ -1,0 +1,3 @@
+source,date,property_id,listing_id,parcel_number,county_fips_code,street_address,city,state,zip,price,type,beds,baths,floor_size,lot_size,built_in,geo_lat,geo_long,load_date,pending_id,days_on_market,agent_name,agent_email,agent_phone,agent_office,days_in_contract
+listings,2025-04-04,-778913386522046507,-6.250505605739703e+17,,53005.0,3877 Barbera St,RICHLAND,WA,99352,634900,single_family,4,3.0,2665,6098,2024,46.221309,-119.327656,2025-04-05,,,,,,,
+pendings,2025-04-04,-778913386522046507,,,53005,3877 Barbera St,RICHLAND,WA,99352,634900,single_family,4,3.0,2665,6098,2024,46.221309,-119.327656,2025-04-05,-6.250505605739703e+17,504.0,Kira Woods,Kira.woods@newtraditionhomes.com,(509) 205-4117,Windermere Group One/Tri-Cities,49.0
