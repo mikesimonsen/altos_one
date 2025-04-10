@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
-
+#this utility is for finding common properties in the listings and pendings tables of the Altos One database
+#It uses a join on the date and listing_id columns to find properties that are listed and pending on the same date
 def find_common_properties(db_name='altos_one.db', output_file='common_properties.csv'):
     conn = sqlite3.connect(db_name)
     

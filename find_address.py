@@ -1,6 +1,8 @@
 import sqlite3
 import pandas as pd
-
+# this utility is for searching for a street address in the listings and pendings tables of the Altos One database
+# It uses a parameterized query to prevent SQL injection attacks
+# and to allow for partial matches using the LIKE operator
 def find_address(address_part, db_name='altos_one.db'):
     conn = sqlite3.connect(db_name)
     
