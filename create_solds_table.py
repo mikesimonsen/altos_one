@@ -4,10 +4,10 @@ def create_solds_table(db_name='altos_one.db'):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     
-    # Drop solds table if it already exists (optional, for re-initialization)
+    # Drop the solds table if it exists
     cursor.execute("DROP TABLE IF EXISTS solds")
     
-    # Create the solds table with the specified columns.
+    # Create the solds table with the specified columns (including load_date)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS solds (
         date TEXT NOT NULL,
@@ -37,12 +37,12 @@ def create_solds_table(db_name='altos_one.db'):
         agent_name TEXT,
         agent_email TEXT,
         agent_phone TEXT,
-        agent_office TEXT
+        agent_office TEXT,
+        load_date TEXT
     )
     """)
     
-    # Create indexes to speed up lookups by key columns.
-    # Mimic indexes similar to the listings and pendings tables.
+    # Create indexes for faster lookup similar to listings and pendings
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_solds_property_id ON solds(property_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_solds_date ON solds(date)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_solds_zip ON solds(zip)')
@@ -50,7 +50,7 @@ def create_solds_table(db_name='altos_one.db'):
     
     conn.commit()
     conn.close()
-    print("✅ 'solds' table created with appropriate columns and indexes.")
+    print("✅ 'solds' table created with load_date column and appropriate indexes.")
 
 if __name__ == "__main__":
     create_solds_table()
