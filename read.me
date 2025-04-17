@@ -1,0 +1,68 @@
+Project Utilities README
+
+This project contains the following Python utilities for managing and analyzing real estate data in an SQLite database (`altos_one.db`). Each script is designed for a specific task, with CSV import/export and database operations.
+
+1. **initialize_database.py**
+   - **Purpose:** Create and initialize database tables (`listings`, `pendings`, `solds`, `zip_to_metro`) with appropriate schemas and indexes.
+   - **Inputs:** None (schema is hard-coded).
+   - **Outputs:** Creates tables in `altos_one.db` and prints confirmation.
+
+2. **insert_weekly_data.py**
+   - **Purpose:** Import weekly CSV data into `listings`, `pendings`, and `solds` tables, adding a `load_date` field.
+   - **Inputs:** Prompts for CSV filenames (or press Enter to skip each).
+   - **Outputs:** Inserts rows in chunks and prints progress and totals.
+
+3. **find_common_properties.py**
+   - **Purpose:** Identify properties present in both `listings` and `pendings` for a given week, optionally restricted to those also in `solds`.
+   - **Inputs:** Prompts for single_family filter (y/n), target week (YYYY-MM-DD), solds filter (y/n), and output filename.
+   - **Outputs:** CSV of common properties with `sold_date` and `sold_price`.
+
+4. **delete_week_data.py**
+   - **Purpose:** Delete all rows for a specified date from `listings` or `pendings` to allow data re-import.
+   - **Inputs:** Prompts for table name (`listings` or `pendings`), date (YYYY-MM-DD), and confirmation.
+   - **Outputs:** Deletes rows and prints count of deleted records.
+
+5. **create_solds_table.py**
+   - **Purpose:** Create the `solds` table (tracking completed sales) with full schema, including `load_date` and indexes.
+   - **Inputs:** None (schema is hard-coded).
+   - **Outputs:** Creates or recreates `solds` in `altos_one.db` and prints confirmation.
+
+6. **find_withdrawals.py**
+   - **Purpose:** Identify withdrawn listings (listed in prior week but not in current week’s `listings` or `pendings`) and compute statistics.
+   - **Inputs:** Prompts for mode (`all` or `detailed`), single_family filter (y/n), and (in detailed mode) target week, market filter (`state`, `metro`, `top50`, or all), and output filenames.
+   - **Outputs:**
+     - **All-history mode:** `withdrawn_history_stats.csv` with date × state stats over time.
+     - **Detailed mode:** Three CSVs — withdrawn listings, state stats, and metro stats (including display names for top50).
+
+7. **analyze_solds_summary.py**
+   - **Purpose:** Aggregate solds data by sale month, metro, and type; compute `sold_count`, `median_sold_price`, and optional `average_sale_to_list_ratio`.
+   - **Inputs:** Prompts for ratio calculation (y/n) and output filename.
+   - **Outputs:** CSV (default `solds_summary.csv`) with summary metrics.
+
+8. **analyze_solds_histograms.py**
+   - **Purpose:** Generate histogram data (counts) by `listed_on` and `pending_on` dates in `solds` to track workflow timing.
+   - **Inputs:** None (reads entire `solds` table).
+   - **Outputs:** Two CSV files — `solds_listed_on_histogram.csv` and `solds_pending_on_histogram.csv`.
+
+9. **analyze_listings_missing_parcel.py**
+   - **Purpose:** Count listings missing `parcel_number`, grouped by listing week (`date`) and `metro`.
+   - **Inputs:** None (reads `listings` and `zip_to_metro`).
+   - **Outputs:** `listings_missing_parcel_by_week_and_metro.csv` with counts per week and metro.
+
+10. **update_metro_display.py**
+    - **Purpose:** Load a CSV of the Top‑50 MSAs with friendly display names and update `zip_to_metro.display_name` accordingly.
+    - **Inputs:** CSV (`metros_msa.csv`) with columns `MSA name` and `display name`.
+    - **Outputs:** Alters `zip_to_metro` to add `display_name` and updates rows, printing row counts per MSA.
+
+11. **extract_solds_by_metro.py**
+    - **Purpose:** Extract all sold records for a given metro (or substring), compute `sale_to_list_price_ratio`, and export.
+    - **Inputs:** Prompts for metro market name (or part of it).
+    - **Outputs:** CSV (e.g., `sold_properties_Dallas.csv`) with sold rows and ratio.
+
+12. **find_address.py**
+    - **Purpose:** Search across `listings`, `pendings`, and `solds` for a partial street address.
+    - **Inputs:** Prompts for address substring.
+    - **Outputs:** `address_search_<query>.csv` with matches from all three tables and a `source` column.
+
+Each of these scripts is designed for modular use; you can chain them or schedule as needed. Refer to the top of each script for additional usage notes.
+

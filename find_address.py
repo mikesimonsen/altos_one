@@ -1,48 +1,47 @@
 import sqlite3
 import pandas as pd
-# this utility is for searching for a street address in the listings and pendings tables of the Altos One database
-# It uses a parameterized query to prevent SQL injection attacks
-# and to allow for partial matches using the LIKE operator
-def find_address(address_part, db_name='altos_one.db'):
-    conn = sqlite3.connect(db_name)
-    
-    # Parameterized query using LIKE with wildcards
-    query_listings = """
-        SELECT 'listings' AS source, *
-        FROM listings
-        WHERE street_address LIKE ?
-    """
-    query_pendings = """
-        SELECT 'pendings' AS source, *
-        FROM pendings
-        WHERE street_address LIKE ?
-    """
-    
-    param = f"%{address_part}%"
-    df_listings = pd.read_sql_query(query_listings, conn, params=(param,))
-    df_pendings = pd.read_sql_query(query_pendings, conn, params=(param,))
-    conn.close()
-    
-    # Combine results from both tables
-    df = pd.concat([df_listings, df_pendings], ignore_index=True)
-    return df
 
 def main():
-    search_term = input("Enter a portion of a street address to search for: ").strip()
-    if not search_term:
-        print("No search term entered. Exiting.")
-        return
-    
-    df = find_address(search_term)
-    total_found = len(df)
-    print(f"\nFound {total_found} rows matching '{search_term}':\n")
-    print(df)
-    
-    export = input("\nExport results to CSV? (y/n): ").strip().lower()
-    if export == 'y':
-        out_file = input("Enter output filename (default: found_addresses.csv): ").strip() or "found_addresses.csv"
-        df.to_csv(out_file, index=False)
-        print(f"Results exported to {out_file}")
+    # Connect to the SQLite database
+    conn = sqlite3.connect('altos_one.db')
 
-if __name__ == "__main__":
+    # Prompt the user for a partial street address to search for
+    address_part = input("Enter part of the street address to search for: ").strip()
+    pattern = f"%{address_part}%"
+
+    # Query each table for matching addresses, including a source column
+    listings_query = (
+        "SELECT 'listings' AS source, * "
+        "FROM listings "
+        "WHERE street_address LIKE ?"
+    )
+    pendings_query = (
+        "SELECT 'pendings' AS source, * "
+        "FROM pendings "
+        "WHERE street_address LIKE ?"
+    )
+    solds_query = (
+        "SELECT 'solds' AS source, * "
+        "FROM solds "
+        "WHERE street_address LIKE ?"
+    )
+
+    # Load into DataFrames
+    df_listings = pd.read_sql_query(listings_query, conn, params=(pattern,))
+    df_pendings = pd.read_sql_query(pendings_query, conn, params=(pattern,))
+    df_solds = pd.read_sql_query(solds_query, conn, params=(pattern,))
+
+    # Combine all results
+    df_all = pd.concat([df_listings, df_pendings, df_solds], ignore_index=True, sort=False)
+
+    # Close the connection
+    conn.close()
+
+    # Export to CSV
+    safe_addr = address_part.replace(' ', '_')
+    output_file = f"address_search_{safe_addr}.csv"
+    df_all.to_csv(output_file, index=False)
+    print(f"✅ Exported {len(df_all)} matching rows to '{output_file}'")
+
+if __name__ == '__main__':
     main()
